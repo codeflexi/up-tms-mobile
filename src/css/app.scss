@@ -1,0 +1,10 @@
+// app global css in SCSS form
+@font-face {
+    font-family: prompt;
+    src: url('src/fonts/prompt-v10-thai_latin-300.woff');
+  }
+  
+  // declare a class which applies it
+  .font-prompt-300 {
+    font-family: 'prompt';
+  }

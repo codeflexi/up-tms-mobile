@@ -2,18 +2,18 @@
   <q-page>
     <q-toolbar class="bg-grey-9 text-white">
       <q-icon
-        color="red-9"
-        name="local_shipping"
+        color="yellow"
+        name="person_pin_circle"
         round
         dense
         size="30px"
       ></q-icon>
-      <q-toolbar-title>Pickup Details</q-toolbar-title>
+      <q-toolbar-title>Dispatch Details</q-toolbar-title>
     </q-toolbar>
     <div class="q-pa-md q-gutter-md">
       <q-list bordered class="flex column justify-center">
         <q-item-label header class="text-weight-bold text-subtitle1">
-          รับสินค้าจากต้นทาง
+          ส่งสินค้าปลายทาง
         </q-item-label>
         <q-separator inset />
         <q-item clickable active-class="bg-grey-9 text-white">
@@ -30,9 +30,9 @@
         <q-separator />
       </q-list>
       <q-tabs v-model="currentTab" class="text-weight-bold">
+        <q-tab name="detail" label="ลูกค้า" />
         <q-tab name="image" label="ถ่ายภาพ" />
         <q-tab name="remark" label="ลายเซ็นต์" />
-        <q-tab name="detail" label="ตรวจสอบ" />
       </q-tabs>
       <q-tab-panels
         animated
@@ -142,7 +142,7 @@
                   </div>
                   <div class="q-px-sm q-pb-xs">
                     <b>Mobile</b>:
-                    <a href="tel:0863953212"> {{ shipment.phone }} </a>
+                    <a href="`tel:${shipment.phone}`"> {{ shipment.phone }} </a>
                   </div>
                   <div class="q-px-sm">
                     <b>Date</b>:
@@ -160,7 +160,7 @@
       <div class="row justify-center q-mt-xl">
         <span class="q-mr-lg">
           <q-btn
-            to="/direct"
+            to="/dispatch"
             size="lg"
             class="full-width bg-white text-black q-mb-xs"
             label="Cancel"
@@ -172,7 +172,7 @@
             class="full-width bg-black text-white q-mb-xs"
             label="Save"
             icon="save"
-            @click="updateShipment"
+            @click="updateDispatch"
         /></span>
       </div>
 
@@ -200,10 +200,13 @@ const shipmentStore = useShipmentStore();
 const router = useRouter();
 const route = useRoute();
 const $q = useQuasar();
+const userId = ref("");
 
 const currentTab = ref("image");
 const dialog = ref(false);
+const dialog1 = ref(false);
 const imgSorce = ref(null);
+const maximizedToggle = ref(true);
 const shipment = ref({});
 const signaturePad = ref(null);
 const signImg = ref(null);
@@ -214,7 +217,7 @@ const options = ref({
 
 onMounted(() => {
   // console.log("Get the route id", route.params.id);
-  currentTab.value = "image";
+  currentTab.value = "detail";
   fectSingleShipment(route.params.id);
 });
 
@@ -274,7 +277,7 @@ const setPopup = () => {
   dialog.value = !dialog.value;
 };
 
-const updateShipment = async () => {
+const updateDispatch = async () => {
   if (!navigator.onLine) {
     $q.dialog({
       title: "Offline",
@@ -293,10 +296,10 @@ const updateShipment = async () => {
       photo: imgSorce.value,
       signature: signImg.value,
     };
-    const update = await shipmentStore.updateShipment(route.params.id, data);
+    const update = await shipmentStore.updateDispatch(route.params.id, data);
 
     // Redirect
-    router.push("/direct");
+    router.push("/dispatch");
 
     $q.notify({
       type: "positive",
@@ -310,7 +313,7 @@ const updateShipment = async () => {
     $q.dialog({
       title: "Picked Up failed",
       message:
-        "Your pickup was unsuccessful. Please make sure that your details are correct.",
+        "Your Delivery was unsuccessful. Please make sure that your details are correct.",
       persistent: true,
     });
   }

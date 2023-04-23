@@ -51,16 +51,18 @@ export const usePickingStore = defineStore('picking', {
     async fetchPickingById(id) {
       try {
         const apiURL = `/api/v1/shipment-picks/${id}`;
+        // /api/v1/shipment-picks/63f34b8304763472947eec6f
         return await server.get(apiURL)
       } catch (error) {
         if (error) throw error
       }
     },
 
-    async handleCreatePicking(data) {
+    async handleCreatePicking(id, data) {
       try {
-        const apiURL = '/api/v1/shipment-picks/picked';
-        return await server.post(apiURL, data)
+        console.log('savePicking!!!!')
+        const apiURL = `/api/v1/shipment-picks/picked/${id}`;
+        return await server.put(apiURL, data)
       } catch (error) {
         if (error) throw error
       }

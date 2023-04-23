@@ -24,12 +24,13 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-lable> {{ shipment.waybill_number }} </q-item-lable>
+            <q-item-lable> {{ shipment.pick_number }} </q-item-lable>
           </q-item-section>
         </q-item>
         <q-separator />
       </q-list>
       <q-tabs v-model="currentTab" class="text-weight-bold">
+        <q-tab name="shipment" label="Shipments" />
         <q-tab name="image" label="ถ่ายภาพ" />
         <q-tab name="remark" label="ลายเซ็นต์" />
         <q-tab name="detail" label="ตรวจสอบ" />
@@ -41,6 +42,41 @@
         infinite
         v-model="currentTab"
       >
+        <q-tab-panel name="shipment">
+          <div class="row justify-between q-mb-lg">
+            <q-btn
+              size="lg"
+              icon="qr_code_scanner"
+              label="สแกน"
+              class="row justify-center bg-red-9 text-white q-mb-xs text-weight-bold"
+              @click="setPopupBarcode()"
+            >
+            </q-btn>
+            <AddBarcodeDiaglog
+              v-model:dialog="dialogBarcode"
+              @shipmentsReturn="shipmentsReturn"
+            />
+
+            <q-btn
+              size="lg"
+              icon="check_box"
+              label="Manual"
+              class="row justify-center bg-red-9 text-white q-mb-xs text-weight-bold"
+              @click="setPopupManual()"
+            >
+            </q-btn>
+            <AddManualDialog
+              v-model:dialog="dialogManual"
+              :shipmentArr="shipment.shipment_ids"
+              @shipmentsReturn="shipmentsReturn"
+            />
+          </div>
+          <div v-if="shipmentArr.length > 0">
+            <ShipmentList :shipments="shipmentArr" />
+          </div>
+          <div v-else>ไม่มีรายการ กรุณากดปุ่ม แสกน!!!</div>
+        </q-tab-panel>
+
         <q-tab-panel name="image">
           <q-btn
             label="กด ถ่ายภาพ"
@@ -95,12 +131,13 @@
           </div>
         </q-tab-panel>
         <q-tab-panel name="detail">
-          Shipment Detail:
+          Pick-up Detail:
+
           <q-list
             bordered
             class="flex column justify-center q-mt-sm rounded-borders shadow-2"
           >
-            <q-item-label header> {{ shipment.waybill_number }} </q-item-label>
+            <q-item-label header> {{ shipment.pick_number }} </q-item-label>
             <q-separator inset />
             <q-item>
               <q-item-section avatar top>
@@ -115,6 +152,12 @@
                   <div class="q-px-sm q-pb-xs">
                     {{ shipment.warehouse?.address_line1 }}
                   </div>
+                  <div class="q-px-sm q-pb-xs">
+                    <b>Mobile</b>:
+                    <a href="`tel:${shipment.warehouse?.phone}`">
+                      {{ shipment.warehouse?.phone }}
+                    </a>
+                  </div>
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -127,26 +170,24 @@
                   text-color="white"
                 />
               </q-item-section>
-
               <q-item-section>
                 <q-item-label class="text-weight-bold">
-                  {{ shipment?.shipping_address_line1 }}
+                  {{ shipment.company?.name }}
                 </q-item-label>
                 <q-item-label caption>
                   <div class="q-px-sm q-pb-xs">
-                    <b>{{ shipment?.shipment_number }} </b> |
-                    {{ shipment.content_items ? shipment.content_items : "" }}
+                    <b>ทะเบียน </b>: {{ shipment.vehicle?.plate_number }}
+                    {{ shipment.vehicle?.plate_province }} :
+                    {{ shipment.vehicle?.type }}
                   </div>
+
                   <div class="q-px-sm q-pb-xs">
-                    <b>Name</b>: {{ shipment.shipping_full_name }}
+                    <b>Memo</b>: {{ shipment.memo }}
                   </div>
-                  <div class="q-px-sm q-pb-xs">
-                    <b>Mobile</b>:
-                    <a href="tel:0863953212"> {{ shipment.phone }} </a>
-                  </div>
+
                   <div class="q-px-sm">
-                    <b>Date</b>:
-                    {{ getDate(shipment.picking_date) }}
+                    <b>Pick</b>:
+                    {{ getDate(shipment.planned_date) }}
                   </div>
                 </q-item-label>
               </q-item-section>
@@ -160,7 +201,7 @@
       <div class="row justify-center q-mt-xl">
         <span class="q-mr-lg">
           <q-btn
-            to="/direct"
+            to="/pick"
             size="lg"
             class="full-width bg-white text-black q-mb-xs"
             label="Cancel"
@@ -184,27 +225,37 @@
   </q-page>
 </template>
 
+
 <script setup>
 import { useRouter, useRoute } from "vue-router";
 import { useQuasar, date } from "quasar";
 import { useUserStore } from "src/stores/user-store";
 import { useShipmentStore } from "src/stores/shipment-store";
+import { usePickingStore } from "src/stores/picking-store";
 import { ref, onMounted, computed } from "vue";
 import moment from "moment-timezone";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import Cam from "src/pages/direct/AddImageDialog.vue";
+import AddBarcodeDiaglog from "src/pages/pick/AddBarcodeDialog.vue";
+import AddManualDialog from "src/pages/pick/AddManualDialog.vue";
+import ShipmentList from "src/pages/pick/ShowShipment.vue";
 import { VueSignaturePad } from "vue-signature-pad";
 
 const userStore = useUserStore();
 const shipmentStore = useShipmentStore();
+const pickingStore = usePickingStore();
 const router = useRouter();
 const route = useRoute();
 const $q = useQuasar();
 
 const currentTab = ref("image");
 const dialog = ref(false);
+const dialogBarcode = ref(false);
+const dialogManual = ref(false);
+
 const imgSorce = ref(null);
 const shipment = ref({});
+const shipmentArr = ref([]);
 const signaturePad = ref(null);
 const signImg = ref(null);
 
@@ -214,7 +265,7 @@ const options = ref({
 
 onMounted(() => {
   // console.log("Get the route id", route.params.id);
-  currentTab.value = "image";
+  currentTab.value = "shipment";
   fectSingleShipment(route.params.id);
 });
 
@@ -229,7 +280,7 @@ const saveSignature = async () => {
 };
 
 const isChangedComputed = computed(() => {
-  if (signImg.value && imgSorce.value) {
+  if (signImg.value && imgSorce.value && shipmentArr.value.length > 0) {
     return false;
   }
 
@@ -240,6 +291,13 @@ const imgReturn = (val) => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
     imgSorce.value = val;
+  } catch (error) {}
+};
+
+const shipmentsReturn = (val) => {
+  try {
+    // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
+    shipmentArr.value = val;
   } catch (error) {}
 };
 
@@ -254,7 +312,7 @@ const undoSignature = async () => {
 const fectSingleShipment = async (id) => {
   try {
     // Get the Picking Up List
-    const shipmentById = await shipmentStore.fetchSingleShipment(id);
+    const shipmentById = await shipmentStore.fetchPickingById(id);
     if (shipmentById) shipment.value = shipmentById.data.data;
     // Set user data in localstorage (PINIA)
   } catch (error) {}
@@ -273,6 +331,29 @@ const setImage = (img) => {
 const setPopup = () => {
   dialog.value = !dialog.value;
 };
+const setPopupManual = () => {
+  dialogManual.value = !dialogManual.value;
+};
+
+const setPopupBarcode = () => {
+  dialogBarcode.value = !dialogBarcode.value;
+};
+
+const checkDuplicate = (list) => {
+  const duplicateIds = list.reduce((acc, cur) => {
+    if (acc[cur.id]) {
+      acc[cur.id]++;
+    } else {
+      acc[cur.id] = 1;
+    }
+    return acc;
+  }, {});
+
+  const result = Object.keys(duplicateIds).filter(
+    (id) => duplicateIds[id] >= 1
+  );
+  return result; // array of duplicate ids
+};
 
 const updateShipment = async () => {
   if (!navigator.onLine) {
@@ -289,21 +370,28 @@ const updateShipment = async () => {
     // Get the tokens/cookies
     // await userStore.getSanctumCookie()
     // Login user
+
+    // Delete Duplicate
+    const unique = checkDuplicate(shipmentArr.value);
+
     const data = {
       photo: imgSorce.value,
       signature: signImg.value,
+      shipment_ids: unique,
     };
-    const update = await shipmentStore.updateShipment(route.params.id, data);
+
+    console.log(data);
+
+    await pickingStore.handleCreatePicking(route.params.id, data);
 
     // Redirect
-    router.push("/direct");
+    router.push("/pick");
 
     $q.notify({
       type: "positive",
       position: "top-left",
       icon: "check_circle",
-      message:
-        "Waybill Number: " + shipment.value.waybill_number + " " + "Updated!",
+      message: "This Picking Number was updated successfully!",
     });
   } catch (error) {
     console.log(error);

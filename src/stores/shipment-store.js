@@ -40,6 +40,14 @@ export const useShipmentStore = defineStore('shipment', {
         if (error) throw error
       }
     },
+    async fetchDispatchByDriver(id) {
+      try {
+        const apiURL = `/api/v1/shipments?driver=${id}&status=OUT FOR DELIVERY`;
+        return await server.get(apiURL)
+      } catch (error) {
+        if (error) throw error
+      }
+    },
     async fetchSingleShipment(id) {
       try {
         const apiURL = `/api/v1/shipments/${id}`;
@@ -54,6 +62,20 @@ export const useShipmentStore = defineStore('shipment', {
         const update = {
           photo: data.photo,
           signature: data.signature
+        }
+        return await server.put(apiURL, update)
+      } catch (error) {
+        if (error) throw error
+      }
+    },
+
+    async updateDispatch(id, data) {
+      try {
+        const apiURL = `/api/v1/shipments/dispatch/${id}`;
+        const update = {
+          photo: data.photo,
+          signature: data.signature,
+          status: 'DELIVERED'
         }
         return await server.put(apiURL, update)
       } catch (error) {

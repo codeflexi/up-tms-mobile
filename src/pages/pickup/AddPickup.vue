@@ -111,7 +111,7 @@ let data = reactive({
 
 const onDecode = async (result) => {
   decodedText.value = result;
-  console.log(result);
+  // console.log(result);
 
   const find = findShipment(listPickings.value, decodedText.value);
 
@@ -133,7 +133,7 @@ const onDecode = async (result) => {
           res.data.data[0].zipcode,
         shipment_number: res.data.data[0].shipment_number,
       };
-      console.log(data);
+      // console.log(data);
     }
     try {
       listPickings.value.push(data);
@@ -160,7 +160,7 @@ const onSubmittedData = async () => {
   }
   try {
     const unique = checkDuplicate(listPickings.value);
-    console.log(unique);
+    // console.log(unique);
     const upload = {
       pick_id: pickingStore.getId,
       shipment_ids: unique,
@@ -217,7 +217,7 @@ const findShipment = (shipments, shipment) => {
 const onLoaded = async () => {
   try {
     // alert("Ready to start");
-    console.log("Ready to start");
+    // console.log("Ready to start");
   } catch (err) {
     console.log(err);
   }

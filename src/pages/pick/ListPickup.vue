@@ -1,14 +1,8 @@
 <template>
   <div id="Directs" class="font-prompt-300">
     <q-toolbar class="bg-grey-10 text-white">
-      <q-icon
-        color="red-9"
-        name="local_shipping"
-        round
-        dense
-        size="30px"
-      ></q-icon>
-      <q-toolbar-title>Direct Pick-Up Lists</q-toolbar-title>
+      <q-icon color="red-9" name="warehouse" round dense size="30px"></q-icon>
+      <q-toolbar-title>Pick-Up Lists</q-toolbar-title>
     </q-toolbar>
 
     <div v-if="listPickings.length > 0" class="section-title">
@@ -37,16 +31,16 @@
       <router-link
         v-for="pick in listPickings"
         :key="pick._id"
-        :to="`/direct/add-direct/${pick._id}`"
-        class="cursor-pointe"
+        :to="`/pick/add-pick/${pick._id}`"
+        class="warehouse"
         style="text-decoration: none; color: black"
       >
         <q-list
           bordered
-          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-blue-1"
+          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-yellow-1"
         >
           <q-item-label class="text-weight-bold" header>
-            {{ pick.waybill_number }}
+            {{ pick.pick_number }}
           </q-item-label>
           <q-separator inset />
           <q-item>
@@ -62,61 +56,55 @@
                 <div class="q-px-sm q-pb-xs">
                   {{ pick.warehouse?.address_line1 }}
                 </div>
+                <div class="q-px-sm q-pb-xs">
+                  <b>Mobile</b>:
+                  <a href="`tel:${pick.phone}`">
+                    {{ pick.warehouse?.phone }}
+                  </a>
+                </div>
               </q-item-label>
             </q-item-section>
           </q-item>
 
           <q-item clickable active-class="bg-grey-9 text-white">
             <q-item-section avatar top>
-              <q-avatar
-                color="red"
-                icon="person_pin_circle"
-                text-color="white"
-              />
+              <q-avatar color="red" icon="today" text-color="white" />
             </q-item-section>
 
             <q-item-section>
               <q-item-label class="text-weight-bold">
-                {{ pick?.shipping_address_line1 }}
+                {{ pick.company?.name }}
               </q-item-label>
               <q-item-label caption>
                 <div class="q-px-sm q-pb-xs">
-                  <b>{{ pick?.shipment_number }} </b> |
-                  {{ pick.content_items ? pick.content_items : "" }}
+                  <b>ทะเบียน </b>: {{ pick.vehicle?.plate_number }}
+                  {{ pick.vehicle?.plate_province }} :
+                  {{ pick.vehicle?.type }}
                 </div>
-                <div class="q-px-sm q-pb-xs">
-                  <b>Name</b>: {{ pick.shipping_full_name }}
-                </div>
-                <div class="q-px-sm q-pb-xs">
-                  <b>Mobile</b>: <a href="tel:0863953212"> {{ pick.phone }} </a>
-                </div>
+
+                <div class="q-px-sm q-pb-xs"><b>Memo</b>: {{ pick.memo }}</div>
+
                 <div class="q-px-sm">
-                  <b>Date</b>:
-                  {{ getDate(pick.picking_date) }}
+                  <b>Pick</b>:
+                  {{ getDate(pick.planned_date) }}
                 </div>
               </q-item-label>
             </q-item-section>
           </q-item>
 
-          <!-- <q-separator />
+          <q-separator />
 
           <q-item>
             <q-item-section side>
-              <q-icon color="deep-orange" name="brightness_medium" />
-             </q-item-section> 
-
-            <q-item-section>
-              <q-slider
-                :model-value="5"
-                :min="0"
-                :max="10"
-                label
-                color="deep-orange"
-              />
+              <q-icon color="deep-orange" name="qr_code_scanner" size="xl" />
             </q-item-section>
+            <q-btn class="q-mx-xs q-text-center" size="sm" color="green"
+              >{{ pick.shipment_ids.length }} Boxes</q-btn
+            >
+            <q-item-section> </q-item-section>
           </q-item>
 
-          <q-separator />  -->
+          <q-separator />
         </q-list>
       </router-link>
     </q-scroll-area>
@@ -129,12 +117,12 @@
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
 import { useUserStore } from "src/stores/user-store";
-import { useShipmentStore } from "src/stores/shipment-store";
+import { usePickingStore } from "src/stores/picking-store";
 import { reactive, ref, onMounted } from "vue";
 import moment from "moment-timezone";
 
 const userStore = useUserStore();
-const shipmentStore = useShipmentStore();
+const pickingStore = usePickingStore();
 const router = useRouter();
 const $q = useQuasar();
 
@@ -188,7 +176,7 @@ const getDate = (dateTime) => {
 const fechPicking = async (driver) => {
   try {
     // Get the Picking Up List
-    const picking = await shipmentStore.fetchShipmentByDriver(driver);
+    const picking = await pickingStore.fetchPicking(driver);
     if (picking) listPickings.value = picking.data.data;
     // Set user data in localstorage (PINIA)
   } catch (error) {}

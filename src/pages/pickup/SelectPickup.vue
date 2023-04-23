@@ -140,8 +140,6 @@ const fechPicking = async (driver) => {
 };
 
 const scanPickup = async (id) => {
-  console.log(id);
-
   const pickingid = await pickingStore.fetchPickingById(id);
   const data = {
     id: pickingid.data.data._id,

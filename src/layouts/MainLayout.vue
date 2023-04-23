@@ -105,9 +105,9 @@
     <q-footer id="mobile-menu" elevated class="bg-white">
       <q-tabs class="bg-black text-light shadow-2">
         <q-route-tab
-          to="/pickup"
+          to="/pick"
           label="Pickup"
-          name="pickup"
+          name="pick"
           icon="warehouse"
           class="icon-size"
         />

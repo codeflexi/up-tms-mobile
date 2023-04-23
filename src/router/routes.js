@@ -39,6 +39,38 @@ const routes = [
         ]
       },
       {
+        path: '/pick',
+        component: () => import('pages/PickupPage.vue'),
+        children: [
+          {
+            path: '',
+            // component: () => import('components/directPuckupPage/SInfo.vue')
+            component: () => import('pages/pick/ListPickup.vue')
+          },
+          {
+            path: 'add-pick/:id',
+            component: () => import('pages/pick/AddPickup.vue')
+            // component: () => import('pages/pickup/AddCamera1.vue')
+          }
+        ]
+      },
+      {
+        path: '/dispatch',
+        component: () => import('pages/DispatchPage.vue'),
+        children: [
+          {
+            path: '',
+            // component: () => import('components/directPuckupPage/SInfo.vue')
+            component: () => import('pages/dispatch/ListDispatch.vue')
+          },
+          {
+            path: 'add-dispatch/:id',
+            component: () => import('pages/dispatch/AddDispatch.vue')
+            // component: () => import('pages/pickup/AddCamera1.vue')
+          }
+        ]
+      },
+      {
         path: '/auth',
         beforeEnter: (to, from, next) => {
           const userStore = useUserStore()

@@ -4,7 +4,6 @@
       <q-toolbar-title> ADD Pick Up </q-toolbar-title>
     </q-toolbar>
 
-
     <q-scroll-area class="q-pa-md form-style">
       <div class="txt-h6 q-pb-md">Please Scan!</div>
 
@@ -70,7 +69,7 @@ const onDecode = async (result) => {
   try {
     decodedText.value = result;
     shipments.value.push(decodedText.value);
-    console.log(shipments.value);
+    // console.log(shipments.value);
   } catch (err) {
     console.log(err);
   }
@@ -79,7 +78,7 @@ const onDecode = async (result) => {
 const onLoaded = async () => {
   try {
     // alert("Ready to start");
-    console.log("Ready to start");
+    // console.log("Ready to start");
   } catch (err) {
     console.log(err);
   }

@@ -112,6 +112,13 @@
           class="icon-size"
         />
         <q-route-tab
+          to="/load"
+          label="Load"
+          name="load"
+          icon="view_in_ar"
+          class="icon-size"
+        />
+        <q-route-tab
           to="/direct"
           label="Direct"
           name="direct"
@@ -128,7 +135,7 @@
         <q-route-tab
           v-if="userStore.email"
           to="/account"
-          label="Account"
+          label="Acc"
           name="account"
           icon="account_circle"
           class="icon-size"

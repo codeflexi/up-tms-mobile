@@ -10,7 +10,7 @@
     <q-card class="text-white card-bg-color">
       <q-toolbar class="bg-red">
         <q-icon name="photo_camera" dense size="40px" color="yellow"></q-icon>
-        <q-toolbar-title class="q-pl-xs">แสกน</q-toolbar-title>
+        <q-toolbar-title class="q-pl-xs">เลือก รายการ</q-toolbar-title>
         <q-space />
         <q-btn class="" dense flat size="md" icon="close" v-close-popup>
           <q-tooltip class="bg-white text-primary">Close</q-tooltip>
@@ -85,7 +85,6 @@
                           </div>
                         </q-item-section>
                       </q-item>
-
                       <q-separator color="red" spaced inset />
                     </q-list>
                   </div>
@@ -99,7 +98,7 @@
 
                     <q-btn
                       v-if="shipments"
-                      label="SAVE PHOTO"
+                      label="SAVE SHIPMENTS"
                       color="black"
                       icon="save"
                       class="q-mt-lg"

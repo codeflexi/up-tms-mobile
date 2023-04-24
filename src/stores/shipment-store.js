@@ -111,6 +111,14 @@ export const useShipmentStore = defineStore('shipment', {
         if (error) throw error
       }
     },
+    async fetchDispatchById(id) {
+      try {
+        const apiURL = `/api/v1/shipment-dispatchs/${id}`;
+        return await server.get(apiURL)
+      } catch (error) {
+        if (error) throw error
+      }
+    },
 
     async handleCreatePicking(data) {
       try {

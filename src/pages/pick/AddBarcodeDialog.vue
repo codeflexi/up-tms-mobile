@@ -105,7 +105,7 @@
 
                     <q-btn
                       v-if="shipments"
-                      label="SAVE PHOTO"
+                      label="SAVE SHIPMENTS"
                       color="black"
                       icon="save"
                       class="q-mt-lg"

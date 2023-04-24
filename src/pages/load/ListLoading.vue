@@ -1,19 +1,13 @@
 <template>
   <div id="Directs" class="font-prompt-300">
     <q-toolbar class="bg-grey-10 text-white">
-      <q-icon
-        color="red-9"
-        name="person_pin_circle"
-        round
-        dense
-        size="30px"
-      ></q-icon>
-      <q-toolbar-title>Dispatch Lists</q-toolbar-title>
+      <q-icon color="red-9" name="warehouse" round dense size="30px"></q-icon>
+      <q-toolbar-title>Loading Lists</q-toolbar-title>
     </q-toolbar>
 
     <div v-if="listPickings.length > 0" class="section-title">
       <div class="text-h6 q-mx-sm">
-        Select one to Dispatch! of {{ listPickings.length }} Jobs
+        Select one to Load to Truck! of {{ listPickings.length }} Jobs
       </div>
     </div>
 
@@ -27,7 +21,7 @@
         icon="add_circle_outline"
       />
       <div class="text-h6">There is no shipment!</div>
-      <div class="q-pa-md info">Wating for pick up!</div>
+      <div class="q-pa-md info">Wating for loading to truck!</div>
     </div>
 
     <q-scroll-area v-else class="list">
@@ -37,33 +31,36 @@
       <router-link
         v-for="pick in listPickings"
         :key="pick._id"
-        :to="`/dispatch/add-dispatch/${pick._id}`"
-        class="cursor-pointer"
+        :to="`/load/add-load/${pick._id}`"
+        class="view_in_ar"
         style="text-decoration: none; color: black"
       >
         <q-list
           bordered
-          class="flex column justify-center q-mt-sm rounded-borders shadow-2"
+          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-grey-2"
         >
           <q-item-label class="text-weight-bold" header>
-            {{ pick.waybill_number }}
+            {{ pick.dispatch_number }}
           </q-item-label>
           <q-separator inset />
           <q-item>
             <q-item-section avatar top>
-              <q-avatar color="red" icon="local_shipping" text-color="white" />
+              <q-avatar color="blue" icon="warehouse" text-color="white" />
             </q-item-section>
 
             <q-item-section>
               <q-item-label class="text-weight-bold">
-                {{ pick.warehouse?.name }} - คนขับ :
-                {{ pick.driver?.name }}
+                {{ pick.warehouse?.name }}
               </q-item-label>
               <q-item-label caption>
                 <div class="q-px-sm q-pb-xs">
-                  ทะเบียน : {{ pick.vehicle?.plate_number }}
-                  {{ pick.vehicle?.plate_province }} :
-                  {{ pick.vehicle?.type }}
+                  {{ pick.warehouse?.address_line1 }}
+                </div>
+                <div class="q-px-sm q-pb-xs">
+                  <b>Mobile</b>:
+                  <a href="`tel:${pick.phone}`">
+                    {{ pick.warehouse?.phone }}
+                  </a>
                 </div>
               </q-item-label>
             </q-item-section>
@@ -71,74 +68,61 @@
 
           <q-item clickable active-class="bg-grey-9 text-white">
             <q-item-section avatar top>
-              <q-avatar
-                color="green"
-                icon="person_pin_circle"
-                text-color="white"
-              />
+              <q-avatar color="red" icon="today" text-color="white" />
             </q-item-section>
 
             <q-item-section>
               <q-item-label class="text-weight-bold">
-                {{ pick?.shipping_address_line1 }}
+                {{ pick.company?.name }}
               </q-item-label>
               <q-item-label caption>
                 <div class="q-px-sm q-pb-xs">
-                  <b>{{ pick?.shipment_number }} </b> |
-                  {{ pick.content_items ? pick.content_items : "" }}
+                  <b>ทะเบียน </b>: {{ pick.vehicle?.plate_number }}
+                  {{ pick.vehicle?.plate_province }} :
+                  {{ pick.vehicle?.type }}
                 </div>
-                <div class="q-px-sm q-pb-xs">
-                  <b>Name</b>: {{ pick.shipping_full_name }}
-                </div>
-                <div class="q-px-sm q-pb-xs">
-                  <b>Mobile</b>:
-                  <a href="`tel:${pick.phone}`"> {{ pick.phone }} </a>
-                </div>
+
+                <div class="q-px-sm q-pb-xs"><b>Memo</b>: {{ pick.memo }}</div>
+
                 <div class="q-px-sm">
-                  <b>Date</b>:
-                  {{ getDate(pick.picking_date) }}
+                  <b>Load</b>:
+                  {{ getDate(pick.planned_date) }}
                 </div>
               </q-item-label>
             </q-item-section>
           </q-item>
 
-          <!-- <q-separator />
+          <q-separator />
 
-            <q-item>
-              <q-item-section side>
-                <q-icon color="deep-orange" name="brightness_medium" />
-              </q-item-section>
+          <q-item>
+            <q-item-section side>
+              <q-icon color="deep-orange" name="qr_code_scanner" size="xl" />
+            </q-item-section>
+            <q-btn class="q-mx-xs q-text-center q-ml-lg" size="sm" color="black"
+              >{{ pick.shipment_ids.length }} Boxes</q-btn
+            >
+            <q-item-section> </q-item-section>
+          </q-item>
 
-              <q-item-section>
-                <q-slider
-                  :model-value="5"
-                  :min="0"
-                  :max="10"
-                  label
-                  color="deep-orange"
-                />
-              </q-item-section>
-            </q-item> -->
-
-          <!-- <q-separator /> -->
+          <q-separator />
         </q-list>
       </router-link>
     </q-scroll-area>
   </div>
 </template>
-  
-  <script setup>
+
+<script setup>
 // IMPORTS
 
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
 import { useUserStore } from "src/stores/user-store";
-import { useShipmentStore } from "src/stores/shipment-store";
+import { useLoadingStore } from "src/stores/loading-store";
 import { reactive, ref, onMounted } from "vue";
 import moment from "moment-timezone";
 
 const userStore = useUserStore();
-const shipmentStore = useShipmentStore();
+const pickingStore = useLoadingStore();
 const router = useRouter();
 const $q = useQuasar();
 
@@ -180,7 +164,7 @@ const isLoggedInPicking = () => {
 
     return;
   }
-  router.push("/dispatch");
+  router.push("/load");
 };
 
 const getDate = (dateTime) => {
@@ -192,15 +176,15 @@ const getDate = (dateTime) => {
 const fechPicking = async (driver) => {
   try {
     // Get the Picking Up List
-    const picking = await shipmentStore.fetchDispatchByDriver(driver);
+    const picking = await pickingStore.fetchPicking(driver);
     if (picking) listPickings.value = picking.data.data;
     // Set user data in localstorage (PINIA)
   } catch (error) {}
 };
 </script>
-  
-  
-  <style lang="scss">
+
+
+<style lang="scss">
 #Directs {
   .form-style {
     margin: 0 auto;
@@ -228,7 +212,6 @@ const fechPicking = async (driver) => {
   }
 }
 </style>
-  
-  
-  
-  
+
+
+

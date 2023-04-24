@@ -55,6 +55,22 @@ const routes = [
         ]
       },
       {
+        path: '/load',
+        component: () => import('pages/PickupPage.vue'),
+        children: [
+          {
+            path: '',
+            // component: () => import('components/directPuckupPage/SInfo.vue')
+            component: () => import('src/pages/load/ListLoading.vue')
+          },
+          {
+            path: 'add-load/:id',
+            component: () => import('pages/load/AddLoading.vue')
+            // component: () => import('pages/pickup/AddCamera1.vue')
+          }
+        ]
+      },
+      {
         path: '/dispatch',
         component: () => import('pages/DispatchPage.vue'),
         children: [

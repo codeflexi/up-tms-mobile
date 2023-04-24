@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { server } from '../boot/axios'
 
-export const usePickingStore = defineStore('picking', {
+export const useLoadingStore = defineStore('loading', {
   state: () => ({
     id: null,
     picking_number: null,
@@ -34,7 +34,8 @@ export const usePickingStore = defineStore('picking', {
   actions: {
     async fetchPicking(id) {
       try {
-        const apiURL = `/api/v1/shipment-picks/driver/${id}`;
+        const apiURL = `/api/v1/shipment-dispatchs/driver/${id}`;
+        // /api/v1/shipment-dispatchs/driver/637f31761deb473649f7027b
         return await server.get(apiURL)
       } catch (error) {
         if (error) throw error
@@ -58,9 +59,9 @@ export const usePickingStore = defineStore('picking', {
       }
     },
 
-    async handleCreatePicking(id, data) {
+    async handleCreateLoading(id, data) {
       try {
-        const apiURL = `/api/v1/shipment-picks/picked/${id}`;
+        const apiURL = `/api/v1/shipment-dispatchs/loaded/${id}`;
         return await server.put(apiURL, data)
       } catch (error) {
         if (error) throw error

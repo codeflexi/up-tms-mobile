@@ -27,7 +27,7 @@
         icon="add_circle_outline"
       />
       <div class="text-h6">There is no shipment!</div>
-      <div class="q-pa-md info">Wating for pick up!</div>
+      <div class="q-pa-md info">Waiting for dispatch!</div>
     </div>
 
     <q-scroll-area v-else class="list">
@@ -102,25 +102,22 @@
             </q-item-section>
           </q-item>
 
-          <!-- <q-separator />
+          <q-separator />
 
-            <q-item>
-              <q-item-section side>
-                <q-icon color="deep-orange" name="brightness_medium" />
-              </q-item-section>
+          <q-item v-if="pick.cargo_info?.iscod === 'Y'">
+            <q-item-section side>
+              <q-icon color="deep-orange" name="currency_bitcoin" size="xl" />
+            </q-item-section>
 
-              <q-item-section>
-                <q-slider
-                  :model-value="5"
-                  :min="0"
-                  :max="10"
-                  label
-                  color="deep-orange"
-                />
-              </q-item-section>
-            </q-item> -->
+            <q-item-section class="bg-red-9 text-white">
+              COD AMOUNT :
+              <div class="q-mr-5 text-white text-h3 text-bold rounded-lg">
+                {{ pick.cargo_info.cod_amount }} THB
+              </div>
+            </q-item-section>
+          </q-item>
 
-          <!-- <q-separator /> -->
+          <q-separator />
         </q-list>
       </router-link>
     </q-scroll-area>
@@ -169,7 +166,7 @@ const isLoggedInPicking = () => {
   if (!userStore.email) {
     const res = $q.dialog({
       title: "You're not logged in!",
-      message: "Login to process the pick-up",
+      message: "Login to process the dispatch",
       cancel: true,
       persistent: true,
     });

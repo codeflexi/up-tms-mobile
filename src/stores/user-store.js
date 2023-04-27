@@ -94,8 +94,8 @@ export const useUserStore = defineStore('user', {
 
     clearUser() {
       this.id = null
-      this.first_name = null
-      this.last_name = null
+      this.firstname = null
+      this.lastname = null
       this.email = null
       this.token = null
     }

@@ -1,7 +1,7 @@
 <template>
   <div id="Directs" class="font-prompt-300">
     <q-toolbar class="bg-grey-10 text-white">
-      <q-icon color="red-9" name="warehouse" round dense size="30px"></q-icon>
+      <q-icon color="red-9" name="view_in_ar" round dense size="30px"></q-icon>
       <q-toolbar-title>Loading Lists</q-toolbar-title>
     </q-toolbar>
 

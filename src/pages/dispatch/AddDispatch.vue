@@ -24,15 +24,15 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-lable> {{ shipment.waybill_number }} </q-item-lable>
+            <q-item-lable> </q-item-lable>
           </q-item-section>
         </q-item>
         <q-separator />
       </q-list>
       <q-tabs v-model="currentTab" class="text-weight-bold">
-        <q-tab name="detail" label="ลูกค้า" />
         <q-tab name="image" label="ถ่ายภาพ" />
-        <q-tab name="remark" label="ลายเซ็นต์" />
+        <q-tab name="signature" label="ลายเซ็นต์" />
+        <q-tab name="detail" label="ลูกค้า" />
       </q-tabs>
       <q-tab-panels
         animated
@@ -59,7 +59,7 @@
           <div v-else>ไม่มีภาพ กรุณากดปุ่ม กด ถ่ายภาพ!!!</div>
         </q-tab-panel>
 
-        <q-tab-panel name="remark">
+        <q-tab-panel name="signature">
           พิมพ์ลายเซ็นต์ด้านล่าง
           <VueSignaturePad
             id="signature"
@@ -138,7 +138,7 @@
                     {{ shipment.content_items ? shipment.content_items : "" }}
                   </div>
                   <div class="q-px-sm q-pb-xs">
-                    <b>Name</b>: {{ shipment.shipping_full_name }}
+                    <b>Name</b>: {{ shipment?.shipping_full_name }}
                   </div>
                   <div class="q-px-sm q-pb-xs">
                     <b>Mobile</b>:
@@ -151,11 +151,33 @@
                 </q-item-label>
               </q-item-section>
             </q-item>
+
+            <q-item>
+              <q-item-section
+                class="bg-red-9 text-white"
+                v-if="shipment.cargo_info?.iscod === 'Y'"
+              >
+                COD AMOUNT :
+                <div class="q-mr-5 text-white text-h3 text-bold rounded-lg">
+                  {{ shipment.cargo_info?.cod_amount }} THB
+                </div>
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-tab-panel>
       </q-tab-panels>
 
       <q-separator />
+
+      <div>
+        <q-checkbox
+          v-if="shipment.cargo_info?.iscod === 'Y' && currentTab === 'detail'"
+          v-model="isCodReceived"
+          color="blue"
+          @click.stop="isChangedComputed"
+          label="รับเงินเรียบร้อย"
+        />
+      </div>
 
       <div class="row justify-center q-mt-xl">
         <span class="q-mr-lg">
@@ -172,7 +194,7 @@
             class="full-width bg-black text-white q-mb-xs"
             label="Save"
             icon="save"
-            @click="updateDispatch"
+            @click="isChangedComputed"
         /></span>
       </div>
 
@@ -210,6 +232,8 @@ const maximizedToggle = ref(true);
 const shipment = ref({});
 const signaturePad = ref(null);
 const signImg = ref(null);
+const isCodReceived = ref(false);
+const isCod = ref("");
 
 const options = ref({
   penColor: "#c0f",
@@ -217,32 +241,50 @@ const options = ref({
 
 onMounted(() => {
   // console.log("Get the route id", route.params.id);
-  currentTab.value = "detail";
+  currentTab.value = "image";
   fectSingleShipment(route.params.id);
 });
+
+const fectSingleShipment = async (id) => {
+  try {
+    // Get the Picking Up List
+    const shipmentById = await shipmentStore.fetchSingleShipment(id);
+    if (shipmentById) shipment.value = shipmentById.data.data;
+    console.log(shipment.value.cargo_info?.iscod);
+    if (shipment.value.cargo_info?.iscod === "Y") {
+      isCodReceived.value = false;
+    } else {
+      isCodReceived.value = true;
+    }
+
+    // Set user data in localstorage (PINIA)
+  } catch (error) {}
+};
 
 const saveSignature = async () => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
+
     const { isEmpty, data } = signaturePad.value.saveSignature();
     signImg.value = data;
-    // console.log(isEmpty);
-    // console.log(data);
+    currentTab.value = "detail";
   } catch (error) {}
 };
 
 const isChangedComputed = computed(() => {
-  if (signImg.value && imgSorce.value) {
+  if (signImg.value && imgSorce.value && isCodReceived.value) {
     return false;
+  } else {
+    return true;
   }
-
-  return true;
 });
 
 const imgReturn = (val) => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
+
     imgSorce.value = val;
+    currentTab.value = "signature";
   } catch (error) {}
 };
 
@@ -251,15 +293,6 @@ const undoSignature = async () => {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
     signaturePad.value.undoSignature();
     signImg.value = null;
-  } catch (error) {}
-};
-
-const fectSingleShipment = async (id) => {
-  try {
-    // Get the Picking Up List
-    const shipmentById = await shipmentStore.fetchSingleShipment(id);
-    if (shipmentById) shipment.value = shipmentById.data.data;
-    // Set user data in localstorage (PINIA)
   } catch (error) {}
 };
 
@@ -319,7 +352,6 @@ const updateDispatch = async () => {
   }
 };
 </script>
-
 
 <style lang="scss">
 #signature {

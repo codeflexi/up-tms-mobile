@@ -79,7 +79,7 @@
                           <div>
                             <q-checkbox
                               v-model="ship._id"
-                              color="red"
+                              color="blue"
                               @click.stop="takePhoto(index)"
                             />
                           </div>

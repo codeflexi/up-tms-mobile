@@ -32,7 +32,7 @@
       <q-tabs v-model="currentTab" class="text-weight-bold">
         <q-tab name="shipment" label="Shipments" />
         <q-tab name="image" label="ถ่ายภาพ" />
-        <q-tab name="remark" label="ลายเซ็นต์" />
+        <q-tab name="signature" label="ลายเซ็นต์" />
         <q-tab name="detail" label="ตรวจสอบ" />
       </q-tabs>
       <q-tab-panels
@@ -95,7 +95,7 @@
           <div v-else>ไม่มีภาพ กรุณากดปุ่ม กด ถ่ายภาพ!!!</div>
         </q-tab-panel>
 
-        <q-tab-panel name="remark">
+        <q-tab-panel name="signature">
           พิมพ์ลายเซ็นต์ด้านล่าง
           <VueSignaturePad
             id="signature"
@@ -274,6 +274,7 @@ const saveSignature = async () => {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
     const { isEmpty, data } = signaturePad.value.saveSignature();
     signImg.value = data;
+    currentTab.value = "detail";
     // console.log(isEmpty);
     // console.log(data);
   } catch (error) {}
@@ -290,14 +291,20 @@ const isChangedComputed = computed(() => {
 const imgReturn = (val) => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
-    imgSorce.value = val;
+    if (val) {
+      imgSorce.value = val;
+      currentTab.value = "signature";
+    }
   } catch (error) {}
 };
 
 const shipmentsReturn = (val) => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
-    shipmentArr.value = val;
+    if (val) {
+      shipmentArr.value = val;
+      currentTab.value = "image";
+    }
   } catch (error) {}
 };
 

@@ -8,7 +8,7 @@
         dense
         size="30px"
       ></q-icon>
-      <q-toolbar-title>Dispatch Details</q-toolbar-title>
+      <q-toolbar-title>Delivery Details</q-toolbar-title>
     </q-toolbar>
     <div class="q-pa-md q-gutter-md">
       <q-list bordered class="flex column justify-center">
@@ -24,7 +24,9 @@
             </q-avatar>
           </q-item-section>
           <q-item-section>
-            <q-item-lable> </q-item-lable>
+            <q-item-lable>
+              {{ shipment.waybill_number }}
+            </q-item-lable>
           </q-item-section>
         </q-item>
         <q-separator />

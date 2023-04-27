@@ -127,7 +127,7 @@
         />
         <q-route-tab
           to="/dispatch"
-          label="Dispatch"
+          label="Delivery"
           name="dispatch"
           icon="location_on"
           class="icon-size"

@@ -8,12 +8,12 @@
         dense
         size="30px"
       ></q-icon>
-      <q-toolbar-title>Dispatch Lists</q-toolbar-title>
+      <q-toolbar-title>Delivery Lists</q-toolbar-title>
     </q-toolbar>
 
     <div v-if="listPickings.length > 0" class="section-title">
       <div class="text-h6 q-mx-sm">
-        Select one to Dispatch! of {{ listPickings.length }} Jobs
+        Select one to Deliver! of {{ listPickings.length }} Jobs
       </div>
     </div>
 

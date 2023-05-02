@@ -14,9 +14,14 @@ const axiosOpenCharge = axios.create({ baseURL: 'https://api.openchargemap.io/v3
 
 if (localStorage.getItem('mb_token')) {
     server.defaults.headers.common.Authorization = 'Bearer ' + localStorage.getItem('mb_token');
+
+    console.log('Local str' + localStorage.getItem('mb_token'))
 } else {
     server.defaults.headers.common.Authorization = 'Bearer ' + ''
 }
+
+console.log('Server ' + JSON.stringify(server.defaults))
+console.log(server.defaults.baseURL)
 
 export default boot(({ app }) => {
     app.config.globalProperties.$axios = axios

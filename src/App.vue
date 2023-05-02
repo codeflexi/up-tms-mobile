@@ -19,12 +19,12 @@ onMounted(async () => {
   server.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (error.response.status === 401) {
-        $q.dialog({
-          message:
-            "Your login was unsuccessful. Please make sure that you are connected to the internet." +
-            error.response.data.error,
-        });
+      // if (error.response.status === 401) {
+      //   $q.dialog({
+      //     message:
+      //       "Your login was unsuccessful. Please make sure that you are connected to the internet." +
+      //       error.response.data.error,
+      //   });
         // userStore.clearUser()
         router.push("/auth");
         // console.log("IS EXPIRED hey hey!!!", error.response.status);

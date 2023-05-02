@@ -21,6 +21,9 @@ export const useUserStore = defineStore('user', {
     },
     getEmail: (state) => {
       return state.email
+    },
+    getToken: (state) => {
+      return state.token
     }
   },
   actions: {
@@ -57,19 +60,28 @@ export const useUserStore = defineStore('user', {
     async logout() {
       try {
         await server.get("/api/v1/auth/logout");
-        this.clearUser()
+        // clearUser()
       } catch (error) {
         if (error) throw error
       }
     },
 
-    async fetchUser() {
+    // async fetchUser() {
+    //   try {
+    //     return await server.get('/api/v1/auth/me')
+    //   } catch (error) {
+    //     if (error) throw error
+    //   }
+    // },
+
+    async fetchUser(id) {
       try {
-        return await server.get('/api/v1/auth/me')
+        return await server.get(`/api/v1/users/${id}`)
       } catch (error) {
         if (error) throw error
       }
     },
+
 
     async updateUser(firstName, lastName) {
       try {
@@ -89,8 +101,16 @@ export const useUserStore = defineStore('user', {
 
     setToken(payload) {
       if (payload.token) this.token = payload.token
-      if (payload.token) localStorage.setItem('token', payload.token);
+      if (payload.token) localStorage.setItem('mb_token', payload.token);
     },
+
+    removeToken() {
+      if (localStorage.getItem('mb_token')) {
+        localStorage.removeItem('mb_token');
+      }
+    },
+
+
 
     clearUser() {
       this.id = null

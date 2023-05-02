@@ -170,7 +170,6 @@
       </q-tab-panels>
 
       <q-separator />
-
       <div>
         <q-checkbox
           v-if="shipment.cargo_info?.iscod === 'Y' && currentTab === 'detail'"
@@ -196,9 +195,26 @@
             class="full-width bg-black text-white q-mb-xs"
             label="Save"
             icon="save"
-            @click="isChangedComputed"
+            @click="updateDispatch"
         /></span>
       </div>
+
+      <q-list class="q-mt-xl">
+        <q-item>
+          <q-item-section side>
+            <q-icon color="deep-orange" name="group_off" size="lg" />
+          </q-item-section>
+          <q-item-section class="text-white">
+            <q-btn
+              :to="`/dispatch/un-dispatch/${shipment._id}`"
+              color="orange"
+              size="lg"
+              class="full-width bg-white text-bold text-black q-mb-xs"
+              label="UN-DEL"
+            />
+          </q-item-section>
+        </q-item>
+      </q-list>
 
       <!-- <q-btn label="popup" @click="setPopup()"></q-btn>
     <q-btn label="next" @click="$refs.tabPanels.next()" />

@@ -6,7 +6,7 @@
 
     <q-scroll-area class="form-style">
       <div class="text-h6 text-center q-mt-md">
-        <q-img src="up_logo.png" height="50px" width="50px" />
+        <q-img height="50px" width="50px" />
         <div>Login to TMS</div>
       </div>
 
@@ -141,12 +141,23 @@ const login = async () => {
     // await userStore.getSanctumCookie()
     // Login user
     const token = await userStore.login(email.value, password.value);
+    console.log("token error");
+    console.log(token);
     userStore.setToken(token.data);
     // Get the user
-    const user = await userStore.fetchUser();
 
-    // Set user data in localstorage (PINIA)
-    userStore.setUser(user.data.data);
+    console.log(userStore.getToken);
+    console.log(token.data.user?.id);
+    if (userStore.getToken) {
+      const user = await userStore.fetchUser(
+        token.data.user.id.replace(/\s/g, "")
+      );
+
+      // console.log("User");
+      // console.log(user.data);
+      // Set user data in localstorage (PINIA)
+      userStore.setUser(user.data.data);
+    }
 
     // Redirect
     router.push("/account");
@@ -159,16 +170,15 @@ const login = async () => {
     });
   } catch (error) {
     console.log(error);
-    $q.dialog({
-      title: "Login failed",
-      message:
-        "Your login was unsuccessful. Please make sure that your details are correct.",
-      persistent: true,
-    });
+    // $q.dialog({
+    //   title: "Login failed" + error,
+    //   message:
+    //     "Your login was unsuccessful. Please make sure that your details are correct.",
+    //   persistent: true,
+    // });
   }
 };
 </script>
-
 
   <style lang="scss">
 #loginPage {

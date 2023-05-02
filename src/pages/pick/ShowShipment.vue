@@ -56,6 +56,14 @@
           </q-item-label>
         </q-item-section>
       </q-item>
+      <q-separator />
+
+      <!-- <q-item>
+        <q-item-section side>
+          <q-icon color="red" name="delete" size="lg" />
+        </q-item-section>
+        <q-item-label>Delete this shipment</q-item-label>
+      </q-item> -->
 
       <!-- <q-separator />
   

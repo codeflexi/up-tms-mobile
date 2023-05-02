@@ -83,6 +83,11 @@ const routes = [
             path: 'add-dispatch/:id',
             component: () => import('pages/dispatch/AddDispatch.vue')
             // component: () => import('pages/pickup/AddCamera1.vue')
+          },
+          {
+            path: 'un-dispatch/:id',
+            component: () => import('pages/dispatch/UnDispatch.vue')
+            // component: () => import('pages/pickup/AddCamera1.vue')
           }
         ]
       },

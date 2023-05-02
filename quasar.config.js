@@ -21,6 +21,9 @@ module.exports = configure(function (ctx) {
       errors: true
     },
     devServer: {
+      port: ctx.mode.spa
+        ? 8000
+        : (ctx.mode.pwa ? 6000 : 9090),
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
@@ -40,8 +43,7 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
     boot: [
-      'axios',
-      'vue-signature-pad'
+      'axios'
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css

@@ -10,7 +10,7 @@
     <q-card class="text-white card-bg-color">
       <q-toolbar class="bg-red">
         <q-icon name="photo_camera" dense size="40px" color="yellow"></q-icon>
-        <q-toolbar-title class="q-pl-xs">เลือก รายการ</q-toolbar-title>
+        <q-toolbar-title class="q-pl-xs">แสกน</q-toolbar-title>
         <q-space />
         <q-btn class="" dense flat size="md" icon="close" v-close-popup>
           <q-tooltip class="bg-white text-primary">Close</q-tooltip>
@@ -24,85 +24,36 @@
               <q-item-label class="text-h6 q-pl-sm">
                 <div class="row">
                   <div v-if="isOpenCamera" class="col-12 text-center">
-                    <StreamBarcodeReader
-                      class="rounded-borders"
-                      style="max-width: 350px"
-                      ref="scanner"
+                    <p class="decode-result">
+                      Last result: <b>{{ result }}</b>
+                    </p>
+                    <QrcodeStream
+                      :camera="camera"
                       @decode="onDecode"
-                      @loaded="onLoaded"
-                    ></StreamBarcodeReader>
+                      @init="onInit"
+                    >
+                      <div
+                        v-if="showScanConfirmation"
+                        class="scan-confirmation"
+                      >
+                        <img alt="Checkmark" width="128px" />
+                      </div>
+                    </QrcodeStream>
                   </div>
+
                   <div class="col-12 text-center">
                     <q-btn
-                      v-if="isShipment"
-                      label="Add+"
+                      v-if="!isOpenCamera"
+                      label="Turn on Scaner"
                       color="primary"
                       icon="camera"
-                      @click="takePhoto"
+                      @click="startCamera"
                     />
                   </div>
 
-                  <div>
-                    <q-list>
-                      <q-item
-                        class="q-text-white"
-                        v-for="(ship, index) in shipmentArr"
-                        :key="ship._id"
-                        clickable
-                        v-ripple
-                      >
-                        <q-item-section top avatar>
-                          <q-avatar
-                            size="xl"
-                            color="blue"
-                            text-color="white"
-                            icon="inventory_2"
-                          />
-                        </q-item-section>
-
-                        <q-item-section class="text-white">
-                          <q-item-label>{{ ship.waybill_number }}</q-item-label>
-                          <q-item-label>{{ ship.sales_channel }}</q-item-label>
-                          <q-item-label>{{
-                            ship.shipping_full_name
-                          }}</q-item-label>
-                          <q-item-label caption>
-                            <div class="q-px-sm q-pb-xs text-white">
-                              <b>To</b>: {{ ship.shipping_address_line1 }}
-                            </div>
-                            <div class="q-px-sm q-pb-xs text-white">
-                              <b>Shipment#</b>: {{ ship.shipment_number }}
-                            </div>
-                          </q-item-label>
-                        </q-item-section>
-                        <q-item-section side bottom>
-                          <div>
-                            <q-checkbox
-                              right-label
-                              v-model="ship._id"
-                              label="OK"
-                              color="red"
-                              size="xl"
-                              checked-icon="task_alt"
-                              unchecked-icon="highlight_off"
-                              @click.stop="takePhoto(index)"
-                            />
-                          </div>
-                        </q-item-section>
-                      </q-item>
-                      <q-separator color="red" spaced inset />
-                    </q-list>
-                  </div>
+                  <div></div>
 
                   <div class="col-12 text-center">
-                    <q-img
-                      :src="imageCapture"
-                      style="height: 320px; max-width: 300px"
-                    />
-                    <img src="" ref="imgTakePhoto" width="250rem" />
-
-                    {{ shipments }}
-
                     <q-btn
                       v-if="shipments"
                       label="SAVE SHIPMENTS"
@@ -129,7 +80,7 @@
 import { onMounted, onUnmounted, computed, toRefs, ref, reactive } from "vue";
 import { useQuasar } from "quasar";
 // The important part: the name of the variable needs to be equal to the ref's name of the canvas element in the template
-import { StreamBarcodeReader } from "vue-barcode-reader";
+import { QrcodeStream } from "vue3-qrcode-reader";
 import { usePickingStore } from "src/stores/picking-store";
 const $q = useQuasar();
 const emit = defineEmits(["update:dialog", "shipmentsReturn"]);
@@ -139,11 +90,14 @@ const pickingStore = usePickingStore();
 // PROPS
 const props = defineProps({
   dialog: Boolean,
-  shipmentArr: Object,
+  clickedLocation: Object,
   via: Array,
 });
 
-const { shipmentArr, dialog, via } = toRefs(props);
+const { clickedLocation, dialog, via } = toRefs(props);
+const camera = ref("auto");
+const result = ref(null);
+const showScanConfirmation = ref(false);
 
 const isNewPhoto = ref(null);
 const isOpenCamera = ref(null);
@@ -153,8 +107,6 @@ const imgTakePhoto = ref(null);
 const shipmenNumber = ref(null);
 const shipments = ref([]);
 const scanner = ref();
-const left = ref(false);
-const checkbox = ref([]);
 
 let shipmentData = reactive({
   // seq: null,
@@ -171,14 +123,6 @@ let shipmentData = reactive({
 
 // PROPS END
 
-const onDecode = async (result) => {
-  // console.log(result);
-  setTimeout(() => {
-    shipmenNumber.value = result;
-    takePhoto();
-  }, 400);
-};
-
 onUnmounted(() => {
   //   video.value.pause();
   //   video.value.currentTime = 0;
@@ -192,12 +136,6 @@ const saveShipment = () => {
   setTimeout(() => {
     emit("shipmentsReturn", shipments.value);
   }, 400);
-};
-
-const deleteTask = (index) => {
-  // alert(index);
-  alert(shipmentArr.value[index].waybill_number);
-  // shipmentArr.value.splice(index, 1);
 };
 
 // COMPUTED
@@ -235,11 +173,10 @@ const clearShipment = () => {
   isShipment.value = false;
 };
 
-const takePhoto = async (index) => {
+const takePhoto = async () => {
   clearShipment();
 
-  const wayBill = shipmentArr.value[index].waybill_number;
-  const res = await pickingStore.fetchShipmentById(wayBill);
+  const res = await pickingStore.fetchShipmentById(shipmenNumber.value);
 
   if (res) {
     isShipment.value = true;
@@ -271,6 +208,41 @@ const takePhoto = async (index) => {
 
 const removeShipment = (shipment) => {
   shipments.value = shipments.value.filter((t) => t !== shipment);
+};
+
+const onInit = async (promise) => {
+  try {
+    await promise;
+  } catch (e) {
+    console.error(e);
+  } finally {
+    showScanConfirmation.value = camera.value === "off";
+  }
+};
+
+const onDecode = async (content) => {
+  result.value = content;
+  shipmenNumber.value = content;
+  // isOpenCamera.value = true;
+
+  pause();
+  await timeout(500);
+  unpause();
+};
+
+const unpause = () => {
+  camera.value = "auto";
+};
+
+const pause = () => {
+  camera.value = "off";
+};
+
+const timeout = (ms) => {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+    takePhoto();
+  });
 };
 
 const addShipment = (shipment) => {
@@ -318,6 +290,14 @@ const addShipment = (shipment) => {
     margin-top: 30px;
     max-width: 500px;
     margin: 0 auto;
+  }
+
+  .scan-confirmation {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
   }
 
   .row {

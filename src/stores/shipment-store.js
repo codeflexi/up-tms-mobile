@@ -82,6 +82,17 @@ export const useShipmentStore = defineStore('shipment', {
         if (error) throw error
       }
     },
+    async updateUnDispatch(id, data) {
+      try {
+        const apiURL = `/api/v1/shipments/un-dispatch/${id}`;
+        const update = {
+          reason: data.reason
+        }
+        return await server.put(apiURL, update)
+      } catch (error) {
+        if (error) throw error
+      }
+    },
     async register(firstName, lastName, email, password, confirmPassword) {
       try {
         await server.post('/register', {

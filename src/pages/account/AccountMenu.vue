@@ -79,9 +79,12 @@ const logout = () => {
   res.onOk(async () => {
     try {
       await userStore.logout();
-
+      userStore.removeToken();
       userStore.clearUser();
-      router.push("/pickup");
+
+      console.log("logout");
+      console.log(userStore.getToken);
+      router.push("/auth");
     } catch (error) {
       console.log(error);
     }

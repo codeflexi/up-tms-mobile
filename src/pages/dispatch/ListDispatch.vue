@@ -43,11 +43,18 @@
       >
         <q-list
           bordered
-          class="flex column justify-center q-mt-sm rounded-borders shadow-2"
+          class="flex column justify-center q-mt-sm rounded-borders shadow-3"
         >
-          <q-item-label class="text-weight-bold" header>
+          <q-item-label
+            class="text-weight-bold rounded-borders text-white bg-grey-7"
+            header
+          >
+            <div class="q-pb-xs">
+              {{ pick.company?.name }}
+            </div>
             {{ pick.waybill_number }}
           </q-item-label>
+
           <q-separator inset />
           <q-item>
             <q-item-section avatar top>
@@ -116,7 +123,6 @@
               </div>
             </q-item-section>
           </q-item>
-
           <q-separator />
         </q-list>
       </router-link>

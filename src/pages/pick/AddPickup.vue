@@ -236,7 +236,7 @@ import { ref, onMounted, computed } from "vue";
 import moment from "moment-timezone";
 import { Camera, CameraResultType } from "@capacitor/camera";
 import Cam from "src/pages/direct/AddImageDialog.vue";
-import AddBarcodeDiaglog from "src/pages/pick/AddBarcodeDialog.vue";
+import AddBarcodeDiaglog from "src/pages/pick/AddBarcodeDialogV3.vue";
 import AddManualDialog from "src/pages/pick/AddManualDialog.vue";
 import ShipmentList from "src/pages/pick/ShowShipment.vue";
 import { VueSignaturePad } from "vue-signature-pad";

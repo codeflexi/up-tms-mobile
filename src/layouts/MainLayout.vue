@@ -11,7 +11,7 @@
           icon="menu"
           aria-label="Menu"
         />
-        <q-img src="src/assets/up_logo.png" height="40px" width="40px" />
+
         <q-toolbar-title class="q-pl-xs text-bold">UP TMS</q-toolbar-title>
         <q-btn
           v-if="userStore.email"

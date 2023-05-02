@@ -37,11 +37,18 @@
       >
         <q-list
           bordered
-          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-grey-2"
+          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-green-1"
         >
-          <q-item-label class="text-weight-bold" header>
+          <q-item-label
+            class="text-weight-bold rounded-borders text-white bg-green-7"
+            header
+          >
+            <div class="q-pb-xs">
+              {{ pick.company?.name }}
+            </div>
             {{ pick.dispatch_number }}
           </q-item-label>
+
           <q-separator inset />
           <q-item>
             <q-item-section avatar top>
@@ -96,7 +103,7 @@
 
           <q-item>
             <q-item-section side>
-              <q-icon color="deep-orange" name="qr_code_scanner" size="xl" />
+              <q-icon color="deep-orange" name="inventory_2" size="xl" />
             </q-item-section>
             <q-btn class="q-mx-xs q-text-center q-ml-lg" size="sm" color="black"
               >{{ pick.shipment_ids.length }} Boxes</q-btn

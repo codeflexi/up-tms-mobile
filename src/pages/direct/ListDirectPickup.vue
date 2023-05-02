@@ -43,9 +43,15 @@
       >
         <q-list
           bordered
-          class="flex column justify-center q-mt-sm rounded-borders shadow-2 bg-blue-1"
+          class="flex column justify-center q-mt-sm rounded-borders shadow-3 bg-blue-1"
         >
-          <q-item-label class="text-weight-bold" header>
+          <q-item-label
+            class="text-weight-bold rounded-borders text-white bg-blue-8"
+            header
+          >
+            <div class="q-pb-xs">
+              {{ pick.company?.name }}
+            </div>
             {{ pick.waybill_number }}
           </q-item-label>
           <q-separator inset />
@@ -61,6 +67,16 @@
               <q-item-label caption>
                 <div class="q-px-sm q-pb-xs">
                   {{ pick.warehouse?.address_line1 }}
+                </div>
+                <div class="q-px-sm q-pb-xs">
+                  <b>Mobile</b>:
+                  <a href="`tel:${pick.warehouse?.phone}`">
+                    {{ pick.warehouse?.phone }}
+                  </a>
+                </div>
+                <div class="q-px-sm">
+                  <b>Date</b>:
+                  {{ getDate(pick.picking_date) }}
                 </div>
               </q-item-label>
             </q-item-section>
@@ -89,10 +105,6 @@
                 </div>
                 <div class="q-px-sm q-pb-xs">
                   <b>Mobile</b>: <a href="tel:0863953212"> {{ pick.phone }} </a>
-                </div>
-                <div class="q-px-sm">
-                  <b>Date</b>:
-                  {{ getDate(pick.picking_date) }}
                 </div>
               </q-item-label>
             </q-item-section>

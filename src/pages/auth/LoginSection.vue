@@ -149,6 +149,7 @@ const login = async () => {
     console.log(userStore.getToken);
     console.log(token.data.user?.id);
     if (userStore.getToken) {
+      console.log(userStore.getToken);
       const user = await userStore.fetchUser(
         token.data.user.id.replace(/\s/g, "")
       );

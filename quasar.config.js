@@ -28,7 +28,7 @@ module.exports = configure(function (ctx) {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
           // target: 'http://localhost:5000',
-          target: 'http://18.138.205.145:3000',
+          target: 'https://api-tms.upecommerce.app',
           changeOrigin: true,
           pathRewrite: {
             '^/api': ''

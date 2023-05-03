@@ -59,6 +59,9 @@ export const useUserStore = defineStore('user', {
 
     async logout() {
       try {
+        console.log('auth' + '-' + server.defaults.headers.common.Authorization)
+        console.log('url' + '-' + server.defaults.baseURL)
+
         await server.get("/api/v1/auth/logout");
         // clearUser()
       } catch (error) {
@@ -76,6 +79,9 @@ export const useUserStore = defineStore('user', {
 
     async fetchUser(id) {
       try {
+        console.log('auth' + '-' + server.defaults.headers.common.Authorization)
+        console.log('url' + '-' + server.defaults.baseURL)
+
         return await server.get(`/api/v1/users/${id}`)
       } catch (error) {
         if (error) throw error

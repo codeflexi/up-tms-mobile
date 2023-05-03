@@ -91,6 +91,13 @@ export const useUserStore = defineStore('user', {
 
     async updateUser(firstName, lastName) {
       try {
+        if (this.token) {
+          server.defaults.headers.common.Authorization = 'Bearer ' + this.token;
+          console.log('auth' + '-' + server.defaults.headers.common.Authorization)
+          console.log('url' + '-' + server.defaults.baseURL)
+        } else {
+          server.defaults.headers.common.Authorization = 'Bearer ' + ''
+        }
         const apiURL = `/api/v1/users/${this.id}`;
         return await server.put(apiURL, { name: firstName, last_name: lastName })
       } catch (error) {

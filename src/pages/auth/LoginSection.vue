@@ -141,30 +141,28 @@ const login = async () => {
     // await userStore.getSanctumCookie()
     // Login user
     const token = await userStore.login(email.value, password.value);
-    console.log("token error");
-    console.log(token);
+    // console.log("token error");
+    // console.log(token);
 
+    console.log(token.data)
     userStore.setToken(token.data);
     // Get the user
 
-    console.log(userStore.getToken);
-    console.log(token.data.user?.id);
+    // console.log(userStore.getToken);
+    // console.log(token.data.user?.id);
 
     if (userStore.getToken) {
       console.log(userStore.getToken);
       const user = await userStore.fetchUser(
         token.data.user.id.replace(/\s/g, "")
       );
-
       // console.log("User");
       // console.log(user.data);
       // Set user data in localstorage (PINIA)
       userStore.setUser(user.data.data);
     }
-
     // Redirect
     router.push("/account");
-
     $q.notify({
       type: "positive",
       position: "top-left",

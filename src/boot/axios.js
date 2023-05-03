@@ -3,6 +3,8 @@ import axios from 'axios'
 
 // const server = axios.create({ baseURL: 'http://localhost:5000' })
 
+// const server = axios.create({ baseURL: 'https://api-tms.upecommerce.app' })
+
 const server = axios.create({ baseURL: 'http://18.138.205.145:3000' })
 
 // server.defaults.withCredentials = true

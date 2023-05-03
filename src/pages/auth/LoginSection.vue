@@ -143,11 +143,13 @@ const login = async () => {
     const token = await userStore.login(email.value, password.value);
     console.log("token error");
     console.log(token);
+
     userStore.setToken(token.data);
     // Get the user
 
     console.log(userStore.getToken);
     console.log(token.data.user?.id);
+
     if (userStore.getToken) {
       console.log(userStore.getToken);
       const user = await userStore.fetchUser(
@@ -170,13 +172,12 @@ const login = async () => {
       message: "Welcome back, " + userStore.getFirstName + "!",
     });
   } catch (error) {
-    console.log(error);
-    // $q.dialog({
-    //   title: "Login failed" + error,
-    //   message:
-    //     "Your login was unsuccessful. Please make sure that your details are correct.",
-    //   persistent: true,
-    // });
+    $q.dialog({
+      title: "Login failed" + error,
+      message:
+        "Your login was unsuccessful. Please make sure that your details are correct.",
+      persistent: true,
+    });
   }
 };
 </script>

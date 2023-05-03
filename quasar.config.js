@@ -27,7 +27,8 @@ module.exports = configure(function (ctx) {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
-          target: 'http://localhost:5000',
+          // target: 'http://localhost:5000',
+          target: 'https://api-tms.upecommerce.app',
           changeOrigin: true,
           pathRewrite: {
             '^/api': ''
@@ -148,7 +149,7 @@ module.exports = configure(function (ctx) {
       // extendSSRWebserverConf (esbuildConf) {},
       // extendPackageJson (json) {},
 
-      pwa: false,
+      pwa: true,
 
       // manualStoreHydration: true,
       // manualPostHydrationTrigger: true,

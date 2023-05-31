@@ -12,7 +12,15 @@
         <q-icon name="photo_camera" dense size="40px" color="yellow"></q-icon>
         <q-toolbar-title class="q-pl-xs">ถ่ายรูป</q-toolbar-title>
         <q-space />
-        <q-btn class="" dense flat size="md" icon="close" v-close-popup>
+        <q-btn
+          class=""
+          dense
+          flat
+          size="md"
+          icon="close"
+          @click="stopCamera"
+          v-close-popup
+        >
           <q-tooltip class="bg-white text-primary">Close</q-tooltip>
         </q-btn>
       </q-toolbar>
@@ -115,6 +123,7 @@ onUnmounted(() => {
 
 const saveImage = () => {
   dialogComputed.value = true;
+  stopCamera();
   setTimeout(() => {
     emit("imgReturn", imageCapture.value);
   }, 400);
@@ -145,6 +154,12 @@ const startCamera = async () => {
     // return imageCapture.value.takePhoto().then((blob) => {
     //   console.log(blob);
     // });
+  }
+};
+
+const stopCamera = async () => {
+  if (isOpenCamera.value) {
+    track.value.stop();
   }
 };
 

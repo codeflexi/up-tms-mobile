@@ -241,8 +241,8 @@ const imgReturn = (val) => {
   try {
     // const { isEmpty, data } = this.$refs.signaturePad.saveSignature();
     if (val) {
+      currentTab.value = "signature";
       imgSorce.value = val;
-      currentTab.value = "signature ";
     }
   } catch (error) {}
 };

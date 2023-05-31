@@ -25,6 +25,7 @@
                 <div class="row">
                   <div v-if="isOpenCamera" class="col-12 text-center">
                     <StreamBarcodeReader
+                      v-if="isOpenCamera"
                       class="rounded-borders"
                       style="max-width: 350px"
                       ref="scanner"
